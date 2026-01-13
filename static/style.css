@@ -1,0 +1,79 @@
+:root {
+    --primary-color: #2563eb;
+    --success-color: #10b981; /* PDFボタン用の緑色 */
+    --bg-color: #f8fafc;
+    --text-color: #1e293b;
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.main-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.content-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* 入力エリア */
+.input-group { margin-bottom: 20px; }
+label { display: block; font-weight: 700; margin-bottom: 8px; }
+input, textarea {
+    width: 100%; padding: 12px; border: 1px solid #ddd;
+    border-radius: 8px; box-sizing: border-box; font-size: 1rem;
+}
+textarea { height: 120px; }
+
+.generate-btn {
+    width: 100%; background: var(--primary-color); color: white;
+    border: none; padding: 15px; border-radius: 8px;
+    font-size: 1.1rem; font-weight: 700; cursor: pointer;
+}
+
+/* レポートヘッダーとPDFボタン */
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.pdf-btn {
+    background-color: var(--success-color);
+    color: white; border: none; padding: 8px 16px;
+    border-radius: 6px; cursor: pointer; font-weight: 700;
+}
+
+/* ローディング表示 */
+.loading-container {
+    text-align: center; padding: 40px;
+}
+.spinner {
+    width: 40px; height: 40px; border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%; animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ★重要：確実に隠すための設定 */
+.hidden { display: none !important; }
+
+/* AI回答の装飾（Markdown用） */
+.report-body h1, .report-body h2 { color: var(--primary-color); border-left: 4px solid var(--primary-color); padding-left: 10px; }
+.report-body table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+.report-body th, .report-body td { border: 1px solid #ddd; padding: 10px; }
+.report-body th { background: #f1f5f9; }
