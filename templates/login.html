@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン - AI Web Consultant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <h2>ログイン</h2>
+        <p>AI戦略コンサルタントへようこそ</p>
+        <form method="POST">
+            <div class="input-group">
+                <label>ユーザー名</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="input-group">
+                <label>パスワード</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="auth-btn">ログイン</button>
+        </form>
+        <div class="footer-link">
+            まだアカウントがない方は <a href="/register">こちら</a>
+        </div>
+    </div>
+</body>
+</html>

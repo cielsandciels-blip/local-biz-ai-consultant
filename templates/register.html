@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>アカウント作成 - AI Web Consultant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <h2>アカウント作成</h2>
+        <p>診断履歴を保存するために登録してください</p>
+        <form method="POST">
+            <div class="input-group">
+                <label>ユーザー名</label>
+                <input type="text" name="username" required placeholder="お名前など">
+            </div>
+            <div class="input-group">
+                <label>パスワード</label>
+                <input type="password" name="password" required placeholder="8文字以上推奨">
+            </div>
+            <button type="submit" class="generate-btn">登録する</button>
+        </form>
+        <p class="footer-link"><a href="/login">すでにアカウントをお持ちの方</a></p>
+    </div>
+</body>
+</html>
