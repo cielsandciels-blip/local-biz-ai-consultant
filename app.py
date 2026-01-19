@@ -1,19 +1,39 @@
 import os
+import sqlite3  # ← 追加：標準ライブラリなのでインストール不要
+from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 
-# .env ファイルから設定（APIキーなど）を読み込む
 load_dotenv()
 
 app = Flask(__name__)
 
-# 環境変数からAPIキーを取得
+# API設定
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
 genai.configure(api_key=GENAI_API_KEY)
-
-# あなたの環境で動作確認が取れたモデル名を使用
 model = genai.GenerativeModel('gemini-flash-latest')
+
+# --- データベースの準備 ---
+def init_db():
+    # データベースファイル（database.db）に接続
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    # テーブル（倉庫の棚）を作る
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            biz_name TEXT,
+            goal TEXT,
+            advice TEXT,
+            created_at TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# アプリ起動時にデータベースを初期化
+init_db()
 
 @app.route('/')
 def index():
@@ -26,33 +46,42 @@ def consult():
         biz_name = data.get('businessName')
         biz_goal = data.get('goal')
         
-        # ウェブ解析士の視点を組み込んだプロフェッショナルなプロンプト
         prompt = (
-            f"あなたは地方企業のDXを支援する超一流のウェブ解析士兼デジタルマーケティング戦略家です。\n\n"
-            f"【クライアント情報】\n"
-            f"企業・店舗名: {biz_name}\n"
-            f"現在の課題・目標: {biz_goal}\n\n"
-            f"【指示】\n"
-            f"プロの視点から、以下の4つの項目で具体的かつ実行可能な戦略レポートを作成してください。\n"
-            f"1. **現状分析 (3C分析的視点)**: 市場における強みと機会を特定してください。\n"
-            f"2. **ターゲットとカスタマージャーニー**: 誰に、どのタイミングでアプローチすべきか具体的に提示してください。\n"
-            f"3. **具体的施策 (3本柱)**: SNS活用、SEO、UI/UX改善、広告などから、優先度の高いものを3つ提案してください。\n"
-            f"4. **成功を測る指標 (KPI)**: 何を数値目標にすべきか設定してください。\n\n"
-            f"【出力ルール】\n"
-            f"・専門用語を使いつつも、経営者に伝わる丁寧な言葉遣い（です・ます調）で。\n"
-            f"・Markdown形式で見出し、箇条書き、太字を多用して読みやすくしてください。\n"
-            f"・山形や仙台といった地域特性を考慮できる場合は、そのエッセンスを加えてください。"
+            f"あなたはプロのウェブ解析士です。企業名 {biz_name}、"
+            f"悩み {biz_goal} に対して戦略を立ててください。"
         )
 
-        # AIに問い合わせ
         response = model.generate_content(prompt)
+        advice_text = response.text
+
+        # ★追加：AIの回答をデータベースに保存する
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO reports (biz_name, goal, advice, created_at) VALUES (?, ?, ?, ?)",
+            (biz_name, biz_goal, advice_text, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        )
+        conn.commit()
+        conn.close()
         
-        return jsonify({"advice": response.text})
+        return jsonify({"advice": advice_text})
 
     except Exception as e:
-        # エラーが発生した場合は詳細をブラウザ側に返す
         return jsonify({"error": str(e)}), 500
 
+# ★追加：保存された履歴を取得する機能
+@app.route('/history', methods=['GET'])
+def get_history():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    # 新しい順に取得
+    cursor.execute("SELECT biz_name, created_at, advice FROM reports ORDER BY id DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    # リスト形式にして返す
+    history = [{"biz_name": r[0], "date": r[1], "advice": r[2]} for r in rows]
+    return jsonify(history)
+
 if __name__ == '__main__':
-    # サーバーの起動
     app.run(debug=True, port=5000)

@@ -1,4 +1,6 @@
-// 戦略レポート生成の開始
+// ページ読み込み時に履歴を表示
+document.addEventListener('DOMContentLoaded', loadHistory);
+
 function startConsult() {
     const bizName = document.getElementById('bizName').value;
     const goal = document.getElementById('goal').value;
@@ -11,13 +13,10 @@ function startConsult() {
         return;
     }
 
-    // 画面表示のリセット
     resultSection.classList.remove('hidden');
     loading.classList.remove('hidden');
-    adviceContent.classList.add('hidden');
     adviceContent.innerHTML = "";
 
-    // Flaskサーバーへリクエスト
     fetch('/consult', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -25,37 +24,46 @@ function startConsult() {
     })
     .then(response => response.json())
     .then(data => {
-        // ローディングを隠し、結果を表示
         loading.classList.add('hidden');
-        adviceContent.classList.remove('hidden');
-
         if (data.advice) {
-            // MarkdownをHTMLに変換して表示
             adviceContent.innerHTML = marked.parse(data.advice);
-        } else {
-            adviceContent.innerHTML = `<p style="color:red;">エラー: ${data.error}</p>`;
+            loadHistory(); // 履歴を再読み込み
         }
-    })
-    .catch(error => {
-        loading.classList.add('hidden');
-        adviceContent.classList.remove('hidden');
-        adviceContent.innerHTML = `<p style="color:red;">通信エラーが発生しました。</p>`;
     });
 }
 
-// ★追加：PDF保存機能
+// 履歴をデータベースから取得して表示
+function loadHistory() {
+    fetch('/history')
+    .then(response => response.json())
+    .then(data => {
+        const historyList = document.getElementById('historyList');
+        historyList.innerHTML = ""; // 一旦クリア
+
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'history-item';
+            card.innerHTML = `
+                <strong>${item.biz_name}</strong>
+                <span>${item.date}</span>
+                <button onclick="showPastReport(\`${encodeURIComponent(item.advice)}\`)">詳細を見る</button>
+            `;
+            historyList.appendChild(card);
+        });
+    });
+}
+
+// 過去のレポートをメイン画面に表示
+function showPastReport(encodedAdvice) {
+    const adviceContent = document.getElementById('adviceContent');
+    const resultSection = document.getElementById('resultSection');
+    adviceContent.innerHTML = marked.parse(decodeURIComponent(encodedAdvice));
+    resultSection.classList.remove('hidden');
+    window.scrollTo({ top: resultSection.offsetTop, behavior: 'smooth' });
+}
+
 function saveAsPDF() {
     const element = document.getElementById('adviceContent');
-    const bizName = document.getElementById('bizName').value || "strategy_report";
-
-    const opt = {
-        margin:       10,
-        filename:     `${bizName}_戦略レポート.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 }, 
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    // PDF生成の実行
-    html2pdf().set(opt).from(element).save();
+    const bizName = document.getElementById('bizName').value || "report";
+    html2pdf().set({ margin: 10, filename: `${bizName}_report.pdf` }).from(element).save();
 }

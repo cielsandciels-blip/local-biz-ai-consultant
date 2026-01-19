@@ -77,3 +77,49 @@ textarea { height: 120px; }
 .report-body table { width: 100%; border-collapse: collapse; margin: 15px 0; }
 .report-body th, .report-body td { border: 1px solid #ddd; padding: 10px; }
 .report-body th { background: #f1f5f9; }
+
+/* 既存のスタイルはそのまま、以下を末尾に追加 */
+
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.history-item {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.history-item strong {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.history-item span {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.history-item button {
+    background: white;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.history-item button:hover {
+    background: var(--primary-color);
+    color: white;
+}

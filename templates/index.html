@@ -3,62 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Web Consultant | 地域企業支援ツール</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
+    <title>AI Web Consultant - 戦略アーカイブ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="main-container">
-        <header class="app-header">
-            <div class="logo-area">
-                <i class="fa-solid fa-robot ai-icon"></i>
-                <h1>AI Web Consultant</h1>
+        <div class="content-card">
+            <h1>🚀 AI Web 戦略コンサルタント</h1>
+            <div class="input-group">
+                <label>企業名・店舗名</label>
+                <input type="text" id="bizName" placeholder="例：村上屋餅店">
             </div>
-            <p class="subtitle">ビジネスを加速させる、あなただけの戦略家。</p>
-        </header>
-        
-        <main class="content-card">
-            <section class="input-section">
-                <div class="input-group">
-                    <label for="bizName"><i class="fa-solid fa-building"></i> 企業名・店舗名</label>
-                    <input type="text" id="bizName" placeholder="例：山形さくらベーカリー">
-                </div>
-                <div class="input-group">
-                    <label for="goal"><i class="fa-solid fa-bullseye"></i> 解決したい悩み・目標</label>
-                    <textarea id="goal" placeholder="例：Webサイトからの集客を増やし、地元での認知度を上げたい。"></textarea>
-                </div>
-                <button onclick="startConsult()" class="generate-btn">
-                    戦略レポートを生成する <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </section>
+            <div class="input-group">
+                <label>現在の悩み・目標</label>
+                <textarea id="goal" placeholder="例：若年層の来店を増やしたい。インスタ活用の具体策を知りたい。"></textarea>
+            </div>
+            <button class="generate-btn" onclick="startConsult()">分析レポートを生成する</button>
+        </div>
 
-            <section class="output-section hidden" id="resultSection">
-                <div class="report-header">
-                    <h2><i class="fa-solid fa-file-invoice"></i> 戦略コンサルティング・レポート</h2>
-                    
-                    <button onclick="saveAsPDF()" class="pdf-btn">
-                        <i class="fa-solid fa-file-pdf"></i> PDFとして保存
-                    </button>
+        <div id="resultSection" class="content-card hidden" style="margin-top: 20px;">
+            <div class="report-header">
+                <h2>戦略レポート</h2>
+                <button class="pdf-btn" onclick="saveAsPDF()">PDFとして保存</button>
+            </div>
+            <div id="loading" class="loading-container hidden">
+                <div class="spinner"></div>
+                <p>ウェブ解析士AIが戦略を練っています...</p>
+            </div>
+            <div id="adviceContent" class="report-body"></div>
+        </div>
+
+        <div class="content-card" style="margin-top: 40px;">
+            <h2>📁 過去の分析履歴</h2>
+            <div id="historyList" class="history-grid">
                 </div>
-                
-                <div id="loading" class="loading-container hidden">
-                    <div class="spinner"></div>
-                    <p>AIウェブ解析士がデータを分析中...</p>
-                </div>
-                
-                <div id="adviceContent" class="report-body hidden"></div>
-            </section>
-        </main>
-        
-        <footer class="app-footer">
-            <p>© 2026 AI Web Consultant Portfolio Project.</p>
-        </footer>
+        </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
