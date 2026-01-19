@@ -8,12 +8,20 @@
 - **プロ仕様のPDF出力**: html2pdf.jsを活用し、クライアントにそのまま提出可能なPDF形式で保存。
 - **高度なプロンプト設計**: ウェブ解析士のフレームワークに基づいた構造的な回答を実現。
 - **レスポンシブデザイン**: PCだけでなく、タブレットやスマホからも操作可能なUI。
+- **分析履歴保存機能**: SQLiteを使用し、過去の診断結果を自動保存・一覧表示。
+- **セキュアな設計**: APIキーをコード内に直接書かず、環境変数ファイル（.env）で管理。
 
 ## 使用技術 (Tech Stack)
 - **Backend**: Python 3.10 / Flask
 - **AI API**: Google Gemini API (gemini-flash-latest)
+- **Database**: SQLite (分析履歴の永続化)
+- **Security**: python-dotenv (APIキーの環境変数管理)
 - **Frontend**: JavaScript (Vanilla JS), HTML5, CSS3
-- **Libraries**: Marked.js (Markdown解析), html2pdf.js (PDF生成), Font Awesome (アイコン)
+- **Libraries**: 
+  - Marked.js (Markdown解析)
+  - html2pdf.js (PDF生成)
+  - Font Awesome (アイコン)
+- **Dependency Management**: requirements.txt (環境再現用)
 
 ## セキュリティ・こだわり
 - **環境変数の管理**: `python-dotenv` を使用し、APIキーをコードから分離。`.gitignore` により機密情報の漏洩を防止しています。
